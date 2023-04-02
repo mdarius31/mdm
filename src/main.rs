@@ -36,7 +36,7 @@ fn main() {
 
     let all_chars: Vec<char> = latin_letters
         .chain(arabic_numerals)
-        .chain(" ".chars())
+        .chain(" ;[]\'\\,./".chars())
         .collect();
 
     // let mut buts: Vec<button::Button> = Vec::new();
@@ -80,7 +80,17 @@ fn main() {
                                     let capital = app::event_key_down(enums::Key::ShiftL)
                                         || app::event_key_down(enums::Key::ShiftR);
                                     let letter = if capital {
-                                        letter.to_ascii_uppercase()
+                                        match letter {
+                                            ';' => ':',
+                                            '[' => '{',
+                                            ']' => '}',
+                                            '\'' => '"',
+                                            '\\' => '|',
+                                            ',' => '<',
+                                            '.' => '>',
+                                            '/' => '?',
+                                            letter => letter.to_ascii_uppercase(),
+                                        }
                                     } else {
                                         letter
                                     };
@@ -95,7 +105,7 @@ fn main() {
                 }
 
                 let entries = entries_og.clone();
-                let  entries = entries
+                let entries = entries
                     .iter()
                     .filter(move |&i| i.name.to_uppercase().contains(&text.to_uppercase()))
                     .cloned()
@@ -224,7 +234,8 @@ fn create_buttons(
         // println!("{entry:?}");
         let s: &str = &entry.name.to_static_str().unwrap();
 
-        let mut but = button::LightButton::new(0, input_h + (i * but_h) as i32, wind_w, but_h as i32, s);
+        let mut but =
+            button::LightButton::new(0, input_h + (i * but_h) as i32, wind_w, but_h as i32, s);
         let exec = entry.exec.clone();
 
         but.set_callback(move |_but| {
